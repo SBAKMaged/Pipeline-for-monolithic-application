@@ -1,0 +1,28 @@
+---
+- name: Manage Apache Installation on Public and Private EC2 Instances
+  hosts: "{{ target }}"
+  become: true
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Update the package manager
+      yum:
+        name: "*"
+        state: latest
+
+    - name: Install Apache
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start Apache service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Add a welcome message to localhost
+      copy:
+        content: "{{ welcome_message }}"
+        dest: /var/www/html/index.html
