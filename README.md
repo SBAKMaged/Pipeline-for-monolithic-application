@@ -1,6 +1,6 @@
-# AWS Auto-Scaling Infrastructure with Terraform
+# AWS Auto-Scaling Infrastructure with Terraform and Ansible
 
-This repository contains a Terraform configuration for deploying an auto-scaling infrastructure on Amazon Web Services (AWS). The setup is designed to dynamically manage EC2 instances based on demand, providing scalability and resilience for cloud-based applications.
+This repository contains a Terraform configuration for deploying an auto-scaling infrastructure on Amazon Web Services (AWS). The setup dynamically manages EC2 instances based on demand, providing scalability and resilience for cloud-based applications. The repository also includes Ansible playbooks for managing Apache installation on both public and private instances.
 
 ## Features
 
@@ -8,6 +8,7 @@ This repository contains a Terraform configuration for deploying an auto-scaling
 - **Launch Configuration**: Defines instance specifications, including AMI, instance type, and user data for initialization.
 - **User Data Script**: Executes a predefined script upon instance launch for automated configuration.
 - **Modular Structure**: Utilizes Terraform modules for better organization, allowing for reusable and maintainable infrastructure code.
+- **Ansible Configuration**: Manages the installation and removal of Apache on both public and private EC2 instances using a jump host (bastion host) setup.
 
 ## Docker Integration
 
@@ -29,18 +30,62 @@ docker run -d -p 3000:3000 sbakmaged/monolithic-node-app:latest
 
 A `Docker-Image.txt` file is also included in this repository with the commands to pull and run the Docker image. This provides an easy reference for running the Dockerized version of the app.
 
+## Ansible Setup
+
+### Inventory
+
+The Ansible `inventory` file defines both public and private EC2 instances. Access to private instances is configured via a jump host (public instance) using SSH tunneling.
+
+### Playbooks
+
+- **Install Apache**: This playbook installs and configures Apache on both public and private instances:
+
+  ```bash
+  ansible-playbook ansible/main.yml -e "target=public_instances"
+  ansible-playbook ansible/main.yml -e "target=private_instances"
+  ```
+
+- **Remove Apache**: This playbook removes Apache from both public and private instances:
+
+  ```bash
+  ansible-playbook ansible/remove_apache.yml -e "target=public_instances"
+  ansible-playbook ansible/remove_apache.yml -e "target=private_instances"
+  ```
+
+### Variables
+
+- Variables for dynamic configuration (e.g., welcome message) are defined in `ansible/vars.yml`. You can modify the content in the variables file to customize the configuration.
+
 ## Architecture
 
 The infrastructure includes a Virtual Private Cloud (VPC), subnets, and security groups, all configured for secure and efficient operation. The design emphasizes high availability and scalability, making it suitable for various applications.
 
 ## Getting Started
 
-To deploy this infrastructure, you'll need an AWS account and Terraform installed. After cloning the repository, configure your AWS credentials and run the following commands:
+To deploy this infrastructure and use Ansible, you'll need an AWS account, Terraform, and Ansible installed. After cloning the repository, configure your AWS credentials and run the following commands:
+
+### Terraform:
 
 ```bash
 terraform init   # Initialize the Terraform environment.
 terraform plan   # Preview the planned changes.
 terraform apply  # Deploy the infrastructure.
+```
+
+### Ansible:
+
+To install Apache on both public and private EC2 instances:
+
+```bash
+ansible-playbook ansible/main.yml -e "target=public_instances"
+ansible-playbook ansible/main.yml -e "target=private_instances"
+```
+
+To remove Apache from both public and private EC2 instances:
+
+```bash
+ansible-playbook ansible/remove_apache.yml -e "target=public_instances"
+ansible-playbook ansible/remove_apache.yml -e "target=private_instances"
 ```
 
 ## Contribution
