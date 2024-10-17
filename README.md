@@ -1,6 +1,6 @@
 # AWS Auto-Scaling Infrastructure with Terraform and Ansible
 
-This repository contains a Terraform configuration for deploying an auto-scaling infrastructure on Amazon Web Services (AWS). The setup dynamically manages EC2 instances based on demand, providing scalability and resilience for cloud-based applications. The repository also includes Ansible playbooks for managing Apache installation on both public and private instances.
+This repository contains a Terraform configuration for deploying an auto-scaling infrastructure on Amazon Web Services (AWS). The setup dynamically manages EC2 instances based on demand, providing scalability and resilience for cloud-based applications. The repository also includes Ansible playbooks for managing Apache installation on both public and private instances, as well as CI/CD configurations for streamlined deployment.
 
 ## Features
 
@@ -30,31 +30,21 @@ docker run -d -p 3000:3000 sbakmaged/monolithic-node-app:latest
 
 A `Docker-Image.txt` file is also included in this repository with the commands to pull and run the Docker image. This provides an easy reference for running the Dockerized version of the app.
 
-## Ansible Setup
+## CI/CD Pipeline
 
-### Inventory
+This repository includes a CI/CD pipeline for the integration and deployment of the containerized application to the privately accessible VMs created earlier.
 
-The Ansible `inventory` file defines both public and private EC2 instances. Access to private instances is configured via a jump host (public instance) using SSH tunneling.
+### Pipeline Stages
 
-### Playbooks
+- **Unit Tests**: Run tests to ensure the application code works as expected.
+- **Build**: Build the Docker image for the application.
+- **Push**: Push the built Docker image to Docker Hub (or another container registry).
+- **Deploy**: Deploy the containerized application to the private EC2 instances.
 
-- **Install Apache**: This playbook installs and configures Apache on both public and private instances:
+### Code Quality and Security
 
-  ```bash
-  ansible-playbook ansible/main.yml -e "target=public_instances"
-  ansible-playbook ansible/main.yml -e "target=private_instances"
-  ```
-
-- **Remove Apache**: This playbook removes Apache from both public and private instances:
-
-  ```bash
-  ansible-playbook ansible/remove_apache.yml -e "target=public_instances"
-  ansible-playbook ansible/remove_apache.yml -e "target=private_instances"
-  ```
-
-### Variables
-
-- Variables for dynamic configuration (e.g., welcome message) are defined in `ansible/vars.yml`. You can modify the content in the variables file to customize the configuration.
+- Ensure clean code by avoiding hard-coded values in the configuration.
+- Implement security measures for sensitive variables, such as using environment variables for secrets and credentials.
 
 ## Architecture
 
