@@ -1,0 +1,2 @@
+[public_instances]
+ec2-<YOUR_PUBLIC_IP>.compute-1.amazonaws.com

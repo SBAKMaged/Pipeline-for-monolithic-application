@@ -1,0 +1,14 @@
+---
+- name: Remove Apache from Public EC2 Instances
+  hosts: public_instances
+  become: true
+  tasks:
+    - name: Stop Apache service
+      service:
+        name: httpd
+        state: stopped
+
+    - name: Remove Apache
+      yum:
+        name: httpd
+        state: absent

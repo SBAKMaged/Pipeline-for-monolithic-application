@@ -1,0 +1,25 @@
+---
+- name: Install Apache on Public EC2 Instances
+  hosts: public_instances
+  become: true  # Use sudo to install packages
+  tasks:
+    - name: Update the package manager
+      yum:
+        name: "*"
+        state: latest
+
+    - name: Install Apache
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start Apache service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Add a welcome message to localhost
+      copy:
+        content: "Welcome to the Apache server!"
+        dest: /var/www/html/index.html
